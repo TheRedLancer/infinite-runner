@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import Engine from './Engine/Engine';
+import OpenLevel from './Components/Level';
 import UI from './UI/UI';
 
 class Game { 
