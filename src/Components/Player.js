@@ -2,13 +2,14 @@ import * as THREE from 'three'
 import Engine from '../Engine/Engine';
 
 export default class Player extends THREE.Object3D {
-    constructor(rmWidth, rmLength) {
+    constructor(maxWidth, maxLength) {
         super();
         /**@type {THREE.PerspectiveCamera} */
         this.camera = undefined;
         this.turnSpeed = 2;
         this.moveSpeed = 20;
         Engine.machine.addCallback(this.update.bind(this));
+        this.levelBoundary = new THREE.Vector3(maxWidth, 0, maxLength);
     }
 
     update(delta_t) {
@@ -41,6 +42,25 @@ export default class Player extends THREE.Object3D {
         if (left) { newPos.x += -1 * frameSpeed; }
         newPos.applyQuaternion(this.quaternion);
         this.position.add(this.checkBoundary(newPos));
+    }
+
+    /**
+     * @param {THREE.Vector3} newPos 
+     */
+    checkBoundary(newPos) {
+        if (this.position.x + newPos.x > this.levelBoundary.x - 1) {
+            newPos.x = this.levelBoundary.x - this.position.x - 1;
+        }
+        if (this.position.x + newPos.x < -1 * this.levelBoundary.x + 1) {
+            newPos.x = -1 * this.levelBoundary.x - this.position.x + 1;
+        }
+        if (this.position.z + newPos.z > this.levelBoundary.z - 1) {
+            newPos.z = this.levelBoundary.z - this.position.z - 1;
+        }
+        if (this.position.z + newPos.z < -1 * this.levelBoundary.z + 1) {
+            newPos.z = -1 * this.levelBoundary.z - this.position.z + 1;
+        }
+        return newPos;
     }
 
     addCamera(camera) {
